@@ -1,0 +1,80 @@
+apply plugin: 'android-sdk-manager'
+apply plugin: 'android'
+
+task askForPasswords << {
+
+    def Properties keystoreProps = new Properties()
+    def location = System.getenv().STORE_PROPS_LOCATION
+
+    if(location != null){
+        keystoreProps.load(new FileInputStream(file(location)))
+    } else {
+        keystoreProps.load(new FileInputStream(file('keystore.properties')))
+    }
+
+    android.signingConfigs.release.storeFile = file(keystoreProps['store'])
+    android.signingConfigs.release.keyAlias = keystoreProps['alias']
+    android.signingConfigs.release.storePassword = keystoreProps['store.password']
+    android.signingConfigs.release.keyPassword = keystoreProps['key.password']
+    if(android.signingConfigs.release.keyPassword == null){
+        android.signingConfigs.release.storePassword = new String(System.console().readPassword('\n\nKeystore ' + android.signingConfigs.release.storeFile + ' password: '))
+    }
+    if(android.signingConfigs.release.keyPassword == null){
+        android.signingConfigs.release.keyPassword = new String(System.console().readPassword('\nKey ' + android.signingConfigs.release.keyAlias + ' password: '))
+    }
+}
+
+tasks.withType(com.android.build.gradle.tasks.PackageApplication).whenTaskAdded { task ->
+    if (!task.name.endsWith('Debug') && !task.name.endsWith('Test')) {
+        task.dependsOn 'askForPasswords'
+    }
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion '19.1.0'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    def Properties versionProps = new Properties()
+    versionProps.load(new FileInputStream(file('version.properties')))
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 19
+        versionCode versionProps['code'].toInteger()
+        versionName versionProps['name']
+        buildConfigField 'String', 'FLICKR_API_KEY', '"' + FLICKR_API_KEY + '"'
+        buildConfigField 'String', 'FLICKR_API_SECRET', '"' + FLICKR_API_SECRET + '"'
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('/dev/null')
+            storePassword ''
+            keyAlias ''
+            keyPassword ''
+        }
+    }
+
+    buildTypes {
+        release {
+            debuggable true
+            signingConfig signingConfigs.release
+            runProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), file('proguard-rules.txt')
+            zipAlign true
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+}
+
+dependencies {
+    compile 'com.google.android.apps.muzei:muzei-api:1.0'
+    compile 'com.squareup.retrofit:retrofit:1.6.0'
+}

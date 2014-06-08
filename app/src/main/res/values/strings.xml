@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Muzei Yle Archives Extension</string>
+    <string name="source_name">Yle Archives</string>
+    <string name="source_description">Photos from Finnish Broadcasting Company Yle Archives</string>
+</resources>
