@@ -1,21 +1,11 @@
 apply plugin: 'android-sdk-manager'
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 task askForPasswords << {
-
-    def Properties keystoreProps = new Properties()
-    def location = System.getenv().STORE_PROPS_LOCATION
-
-    if(location != null){
-        keystoreProps.load(new FileInputStream(file(location)))
-    } else {
-        keystoreProps.load(new FileInputStream(file('keystore.properties')))
-    }
-
-    android.signingConfigs.release.storeFile = file(keystoreProps['store'])
-    android.signingConfigs.release.keyAlias = keystoreProps['alias']
-    android.signingConfigs.release.storePassword = keystoreProps['store.password']
-    android.signingConfigs.release.keyPassword = keystoreProps['key.password']
+    android.signingConfigs.release.storeFile = file(STORE)
+    android.signingConfigs.release.keyAlias = ALIAS
+    android.signingConfigs.release.storePassword = STORE_PASSWORD
+    android.signingConfigs.release.keyPassword = KEY_PASSWORD
     if(android.signingConfigs.release.keyPassword == null){
         android.signingConfigs.release.storePassword = new String(System.console().readPassword('\n\nKeystore ' + android.signingConfigs.release.storeFile + ' password: '))
     }
@@ -31,19 +21,19 @@ tasks.withType(com.android.build.gradle.tasks.PackageApplication).whenTaskAdded 
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.1.1'
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     def Properties versionProps = new Properties()
     versionProps.load(new FileInputStream(file('version.properties')))
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 19
+        targetSdkVersion 21
         versionCode versionProps['code'].toInteger()
         versionName versionProps['name']
         buildConfigField 'String', 'FLICKR_API_KEY', '"' + FLICKR_API_KEY + '"'
@@ -63,9 +53,10 @@ android {
         release {
             debuggable false
             signingConfig signingConfigs.release
-            runProguard true
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), file('proguard-rules.txt')
-            zipAlign true
+            zipAlignEnabled true
         }
     }
 
@@ -76,5 +67,5 @@ android {
 
 dependencies {
     compile 'com.google.android.apps.muzei:muzei-api:1.0'
-    compile 'com.squareup.retrofit:retrofit:1.6.0'
+    compile 'com.squareup.retrofit:retrofit:1.8.0'
 }

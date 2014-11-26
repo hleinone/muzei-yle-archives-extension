@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Random;
 
-import retrofit.ErrorHandler;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -36,24 +35,18 @@ public class YleArchivesArtSource extends RemoteMuzeiArtSource {
         yleArchivesService = new RestAdapter.Builder()
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setEndpoint("https://www.flickr.com")
-                .setRequestInterceptor(new RequestInterceptor() {
-                    @Override
-                    public void intercept(RequestInterceptor.RequestFacade request) {
-                        request.addQueryParam("api_key", BuildConfig.FLICKR_API_KEY);
+                .setRequestInterceptor((RequestInterceptor.RequestFacade request) ->
+                                request.addQueryParam("api_key", BuildConfig.FLICKR_API_KEY)
+                )
+                .setErrorHandler((RetrofitError retrofitError) -> {
+                    Log.d(TAG, "Retrofit error", retrofitError);
+                    int statusCode = retrofitError.getResponse().getStatus();
+                    if (retrofitError.getKind() == RetrofitError.Kind.NETWORK
+                            || (500 <= statusCode && statusCode < 600)) {
+                        return new RetryException();
                     }
-                })
-                .setErrorHandler(new ErrorHandler() {
-                    @Override
-                    public Throwable handleError(RetrofitError retrofitError) {
-                        Log.d(TAG, "Retrofit error", retrofitError);
-                        int statusCode = retrofitError.getResponse().getStatus();
-                        if (retrofitError.isNetworkError()
-                                || (500 <= statusCode && statusCode < 600)) {
-                            return new RetryException();
-                        }
-                        scheduleUpdate();
-                        return retrofitError;
-                    }
+                    scheduleUpdate();
+                    return retrofitError;
                 })
                 .build()
                 .create(YleArchivesService.class);

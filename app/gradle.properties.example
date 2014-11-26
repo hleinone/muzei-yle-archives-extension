@@ -1,0 +1,6 @@
+# If planning to release, create your own gradle.properties file, this is just an example
+STORE=/path/to/your/keystore
+ALIAS=keystore_alias
+# These are optional, the build system will ask for these if not defined
+STORE_PASSWORD=password
+KEY_PASSWORD=password
