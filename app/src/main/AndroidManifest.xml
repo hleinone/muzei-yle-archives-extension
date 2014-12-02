@@ -23,6 +23,8 @@
             </intent-filter>
         </service>
 
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="aaa2be69fb9305dafb72c6b9e3295e8ebf028964"/>
+
     </application>
 
 </manifest>

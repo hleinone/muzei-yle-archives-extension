@@ -1,6 +1,10 @@
-# If planning to release, create your own gradle.properties file, this is just an example
+# Create your own gradle.properties file, this is just an example
+# Release signature configuration
 STORE=/path/to/your/keystore
 ALIAS=keystore_alias
-# These are optional, the build system will ask for these if not defined
+# Optional, the build system will ask for these if not defined
 STORE_PASSWORD=password
 KEY_PASSWORD=password
+# Flickr API configuration
+FLICKR_API_KEY=0123456789abcdef0123456789abcdef
+FLICKR_API_SECRET=0123456789abcdef

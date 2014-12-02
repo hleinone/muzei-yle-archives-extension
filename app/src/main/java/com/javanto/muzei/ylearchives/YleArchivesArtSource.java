@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.apps.muzei.api.Artwork;
 import com.google.android.apps.muzei.api.RemoteMuzeiArtSource;
 
@@ -11,6 +12,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Random;
 
+import io.fabric.sdk.android.Fabric;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -31,6 +33,9 @@ public class YleArchivesArtSource extends RemoteMuzeiArtSource {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        }
         setUserCommands(BUILTIN_COMMAND_ID_NEXT_ARTWORK);
         yleArchivesService = new RestAdapter.Builder()
                 .setLogLevel(RestAdapter.LogLevel.FULL)
