@@ -6,12 +6,14 @@ apply plugin: 'io.fabric'
 task askForPasswords << {
     android.signingConfigs.release.storeFile = file(STORE)
     android.signingConfigs.release.keyAlias = ALIAS
-    android.signingConfigs.release.storePassword = STORE_PASSWORD
-    android.signingConfigs.release.keyPassword = KEY_PASSWORD
-    if(android.signingConfigs.release.keyPassword == null){
+    if (hasProperty('STORE_PASSWORD')) {
+        android.signingConfigs.release.storePassword = STORE_PASSWORD
+    } else {
         android.signingConfigs.release.storePassword = new String(System.console().readPassword('\n\nKeystore ' + android.signingConfigs.release.storeFile + ' password: '))
     }
-    if(android.signingConfigs.release.keyPassword == null){
+    if (hasProperty('KEY_PASSWORD')) {
+        android.signingConfigs.release.keyPassword = KEY_PASSWORD
+    } else {
         android.signingConfigs.release.keyPassword = new String(System.console().readPassword('\nKey ' + android.signingConfigs.release.keyAlias + ' password: '))
     }
 }
