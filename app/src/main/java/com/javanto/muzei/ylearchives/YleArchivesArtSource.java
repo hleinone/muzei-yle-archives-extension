@@ -19,7 +19,7 @@ public class YleArchivesArtSource extends RemoteMuzeiArtSource {
     private static final String TAG = YleArchivesArtSource.class.getCanonicalName();
 
     private static final String SOURCE_NAME = YleArchivesArtSource.class.getName();
-    private static final String FLICKR_USERNAME = "Finnish Broadcasting Company Yle Archives";
+    private static final String FLICKR_USERNAME = "Archives of the Finnish Broadcasting Company Yle";
 
     private YleArchivesService yleArchivesService;
     private Random random;
