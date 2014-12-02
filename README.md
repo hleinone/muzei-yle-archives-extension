@@ -1,10 +1,11 @@
 # Muzei Yle Archives Extension
 
-*Photos from Finnish Broadcasting Company Yle Archives*
+*Photos from Archives of the Finnish Broadcasting Company Yle
+
 
 **Requires Muzei wallpaper application!**
 
-A Yle Archives extension for Roman Nurik's Muzei live wallpaper application.
+A Yle Archives extension for Roman Nurik's [Muzei](http://www.muzei.co/) live wallpaper application.
 
 Shows a randomly selected photo from [Yle Archive's photo stream at Flickr](https://www.flickr.com/photos/ylearkisto/).
 
