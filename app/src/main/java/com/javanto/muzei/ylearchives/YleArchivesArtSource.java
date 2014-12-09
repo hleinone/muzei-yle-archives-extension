@@ -16,12 +16,15 @@ import io.fabric.sdk.android.Fabric;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class YleArchivesArtSource extends RemoteMuzeiArtSource {
     private static final String TAG = YleArchivesArtSource.class.getCanonicalName();
 
     private static final String SOURCE_NAME = YleArchivesArtSource.class.getName();
     private static final String FLICKR_USERNAME = "Archives of the Finnish Broadcasting Company Yle";
+    private static final RestAdapter.LogLevel RETROFIT_LOG_LEVEL = BuildConfig.DEBUG ?
+            RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE;
 
     private YleArchivesService yleArchivesService;
     private Random random;
@@ -38,16 +41,18 @@ public class YleArchivesArtSource extends RemoteMuzeiArtSource {
         }
         setUserCommands(BUILTIN_COMMAND_ID_NEXT_ARTWORK);
         yleArchivesService = new RestAdapter.Builder()
-                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setLogLevel(RETROFIT_LOG_LEVEL)
                 .setEndpoint("https://www.flickr.com")
                 .setRequestInterceptor((RequestInterceptor.RequestFacade request) ->
                                 request.addQueryParam("api_key", BuildConfig.FLICKR_API_KEY)
                 )
                 .setErrorHandler((RetrofitError retrofitError) -> {
                     Log.d(TAG, "Retrofit error", retrofitError);
-                    int statusCode = retrofitError.getResponse().getStatus();
-                    if (retrofitError.getKind() == RetrofitError.Kind.NETWORK
-                            || (500 <= statusCode && statusCode < 600)) {
+                    Response response;
+                    int statusCode;
+                    if (retrofitError.getKind() == RetrofitError.Kind.NETWORK ||
+                            (response = retrofitError.getResponse()) == null ||
+                            ((statusCode = response.getStatus()) >= 500 && statusCode < 600)) {
                         return new RetryException();
                     }
                     scheduleUpdate();
