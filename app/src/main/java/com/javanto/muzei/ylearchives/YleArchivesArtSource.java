@@ -84,7 +84,7 @@ public class YleArchivesArtSource extends RemoteMuzeiArtSource {
         scheduleUpdate();
     }
 
-    private YleArchivesService.Photo getPhoto(YleArchivesService.User user) {
+    private YleArchivesService.Photo getPhoto(YleArchivesService.User user) throws RetryException {
         Log.d(TAG, "user " + user);
         YleArchivesService.Photos photos = yleArchivesService.getPhotos(user.id, 1).photos;
         int total = photos.total;
