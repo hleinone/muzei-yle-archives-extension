@@ -1,7 +1,6 @@
 # Muzei Yle Archives Extension
 
-*Photos from Archives of the Finnish Broadcasting Company Yle
-
+*Photos from Archives of the Finnish Broadcasting Company Yle*
 
 **Requires Muzei wallpaper application!**
 
